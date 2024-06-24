@@ -16,7 +16,7 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(cuid())
+    id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -24,6 +24,7 @@ model User {
   password      String?
   role          UserRole  @default(USER)
   accounts      Account[]
+  articles      Article[] // Add this line to establish the relation
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
   @@map(name: "users")
@@ -46,4 +47,18 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+model Article {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  summary   String?
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map(name: "articles")
 }
